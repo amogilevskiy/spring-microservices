@@ -1,0 +1,12 @@
+server:
+  port: 8900
+
+  jackson:
+    property-naming-strategy: SNAKE_CASE
+
+eureka:
+  client:
+    fetch-registry: true
+
+jwt:
+  secret: 55FA4000E92C1E46A6A5DAF0E7874336
