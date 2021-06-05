@@ -15,11 +15,6 @@ public class RouteConfig {
     @Bean
     public RouteLocator routes(RouteLocatorBuilder builder) {
         return builder.routes()
-                .route("auth-service", route -> route.path("/api/1.0/auth/**")
-                        .filters(filter -> filter
-                                .filter(jwtAuthFilter)
-                                .rewritePath("/api/(?<segment>.*)", "/${segment}"))
-                        .uri("lb://auth-service"))
                 .route("profile-service", r -> r.path("/api/1.0/profiles/**")
                         .filters(filter -> filter
                                 .filter(jwtAuthFilter)

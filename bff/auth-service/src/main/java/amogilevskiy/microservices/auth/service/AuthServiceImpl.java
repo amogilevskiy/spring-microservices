@@ -3,9 +3,9 @@ package amogilevskiy.microservices.auth.service;
 import amogilevskiy.microservices.auth.domain.User;
 import amogilevskiy.microservices.auth.dto.AuthRequestDto;
 import amogilevskiy.microservices.auth.dto.AuthResponseDto;
-import amogilevskiy.microservices.auth.dto.RegisterRequestDto;
 import amogilevskiy.microservices.auth.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -33,12 +33,16 @@ public class AuthServiceImpl implements AuthService {
 
     @Transactional
     @Override
-    public AuthResponseDto register(RegisterRequestDto dto) {
+    public AuthResponseDto register(AuthRequestDto dto) {
         var user = User.builder()
                 .username(dto.getUsername())
                 .password(dto.getPassword())
                 .build();
-        return generateAuthResponse(userRepository.save(user));
+        try {
+            return generateAuthResponse(userRepository.save(user));
+        } catch (DataIntegrityViolationException e) {
+            throw new UserAlreadyExistsException();
+        }
     }
 
     private AuthResponseDto generateAuthResponse(User user) {

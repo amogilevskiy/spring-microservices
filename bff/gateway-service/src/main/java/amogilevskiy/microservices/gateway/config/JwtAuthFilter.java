@@ -17,15 +17,13 @@ import java.util.List;
 @RequiredArgsConstructor
 public class JwtAuthFilter implements GatewayFilter {
 
-    private static final int BEARER_PREFIX_LENGTH = 7;
-    private static final String AUTHORIZATION_HEADER = "Authorization";
-    private static final String AUTH_HEADER_USER_ID = "X-AUTH-USER-ID";
-
     public static final List<String> NOT_PROTECTED_ENDPOINTS = List.of(
             "/api/1.0/auth/login",
             "/api/1.0/auth/register"
     );
-
+    private static final int BEARER_PREFIX_LENGTH = 7;
+    private static final String AUTHORIZATION_HEADER = "Authorization";
+    private static final String AUTH_HEADER_USER_ID = "X-AUTH-USER-ID";
     private final JwtService jwtService;
 
     @Override
