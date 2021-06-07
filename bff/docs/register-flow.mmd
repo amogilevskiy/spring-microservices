@@ -1,0 +1,11 @@
+sequenceDiagram
+    participant Client
+    Client->>Gateway Service: POST /auth/register
+    participant Gateway Service
+    Note left of Auth Service: Create User
+    Gateway Service->>Auth Service: POST /auth/register
+    Auth Service->>Gateway Service: (201) JWT access token with user id
+    Note left of Profile Service: Create Profile
+    Gateway Service->>Profile Service: POST /profiles/{user_id}
+    Profile Service->>Gateway Service: (201) Profile
+    Gateway Service->>Client: (201) User info with access token

@@ -1,0 +1,11 @@
+sequenceDiagram
+    participant Client
+    Client->>Gateway Service: POST /auth/login
+    participant Gateway Service
+    Note left of Auth Service: Get access token
+    Gateway Service->>Auth Service: POST /auth/login
+    Auth Service->>Gateway Service: (200) JWT access token with user id
+    Note over Gateway Service, Profile Service: Set X-AUTH-USER-ID header with id from JWT
+    Gateway Service->>Profile Service: GET /profiles/{user_id}
+    Profile Service->>Gateway Service: (200) Profile
+    Gateway Service->>Client: (200) User info with access token

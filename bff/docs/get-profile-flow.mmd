@@ -1,0 +1,9 @@
+sequenceDiagram
+    participant Client
+    Note right of Client: Authorization header with JWT
+    Client->>Gateway Service: GET /profiles/{user_id}
+    participant Gateway Service
+    Note over Gateway Service, Profile Service: Set X-AUTH-USER-ID header with id from JWT
+    Gateway Service->>Profile Service: GET /profiles/{user_id}
+    Profile Service->>Gateway Service: (200) Profile
+    Gateway Service->>Client: (200) Profile
