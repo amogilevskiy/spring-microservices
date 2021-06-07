@@ -17,5 +17,10 @@ spring:
     property-naming-strategy: SNAKE_CASE
 
 eureka:
+  instance:
+    preferIpAddress: true
+    hostname: profile-service
   client:
     fetch-registry: true
+    serviceUrl:
+      defaultZone: http://discovery-service:8761/eureka

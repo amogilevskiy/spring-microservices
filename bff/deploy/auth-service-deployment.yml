@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: auth-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: auth-service
+  template:
+    metadata:
+      labels:
+        app: auth-service
+    spec:
+      containers:
+        - name: auth-service
+          image: amogilevskiy/ms-bff-auth-service:1.0
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8901
+          readinessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8901
+            initialDelaySeconds: 20
+            timeoutSeconds: 10
+            periodSeconds: 3
+            failureThreshold: 2
+          livenessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8901
+            initialDelaySeconds: 30
+            timeoutSeconds: 2
+            periodSeconds: 8
+            failureThreshold: 1

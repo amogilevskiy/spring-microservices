@@ -36,7 +36,7 @@ public class AuthServiceImpl implements AuthService {
     public AuthResponseDto register(AuthRequestDto dto) {
         var user = User.builder()
                 .username(dto.getUsername())
-                .password(dto.getPassword())
+                .password(passwordEncoder.encode(dto.getPassword()))
                 .build();
         try {
             return generateAuthResponse(userRepository.save(user));

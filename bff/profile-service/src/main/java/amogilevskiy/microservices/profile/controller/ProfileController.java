@@ -6,6 +6,7 @@ import amogilevskiy.microservices.profile.dto.ProfileResponseDto;
 import amogilevskiy.microservices.profile.dto.UpdateProfileRequestDto;
 import amogilevskiy.microservices.profile.service.ProfileService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -20,6 +21,7 @@ public class ProfileController {
         return profileService.findById(id, new AuthUser(authUserId));
     }
 
+    @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/{id}")
     public ProfileResponseDto createById(@PathVariable long id,
                                          @RequestHeader(value = "X-AUTH-USER-ID") long authUserId,
@@ -29,8 +31,8 @@ public class ProfileController {
 
     @PatchMapping("/{id}")
     public ProfileResponseDto updatedById(@PathVariable long id,
-                                         @RequestHeader(value = "X-AUTH-USER-ID") long authUserId,
-                                         @RequestBody UpdateProfileRequestDto dto) {
+                                          @RequestHeader(value = "X-AUTH-USER-ID") long authUserId,
+                                          @RequestBody UpdateProfileRequestDto dto) {
         return profileService.updateById(id, new AuthUser(authUserId), dto);
     }
 

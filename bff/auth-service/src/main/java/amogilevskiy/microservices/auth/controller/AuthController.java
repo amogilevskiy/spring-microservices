@@ -4,10 +4,8 @@ import amogilevskiy.microservices.auth.dto.AuthRequestDto;
 import amogilevskiy.microservices.auth.dto.AuthResponseDto;
 import amogilevskiy.microservices.auth.service.AuthService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/1.0/auth")
@@ -21,6 +19,7 @@ public class AuthController {
         return authService.login(dto);
     }
 
+    @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/register")
     public AuthResponseDto register(@RequestBody AuthRequestDto dto) {
         return authService.register(dto);

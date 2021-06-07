@@ -1,0 +1,568 @@
+{
+	"info": {
+		"_postman_id": "2f36d49e-efd5-4067-bda1-5a56a6a8b5e0",
+		"name": "microservices-bff-tests",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Scenario 1",
+			"item": [
+				{
+					"name": "Register first tester",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 201\", function () {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"",
+									"pm.test(\"Response contains tokens\", function () {",
+									"    var jsonData = pm.response.json();",
+									"",
+									"    const firstTesterId = jsonData[\"id\"];",
+									"    const firstTesterUsername = jsonData[\"username\"];",
+									"",
+									"    const tokens = jsonData[\"tokens\"];",
+									"    const accessToken = tokens[\"access_token\"];",
+									"    const refreshToken = tokens[\"refresh_token\"];",
+									"",
+									"    pm.collectionVariables.set(\"first_tester_id\", firstTesterId);",
+									"    pm.collectionVariables.set(\"first_tester_username\", firstTesterUsername);",
+									"",
+									"    pm.expect(firstTesterId).to.not.undefined;",
+									"    pm.expect(firstTesterUsername).to.not.undefined;",
+									"    pm.expect(accessToken).to.not.undefined;",
+									"    pm.expect(refreshToken).to.not.undefined;",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\": \"{{$randomUserName}}\",\n    \"password\": \"test_password\",\n    \"first_name\": \"test_first_name\",\n    \"last_name\": \"test_last_name\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/bff/api/1.0/auth/register",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"bff",
+								"api",
+								"1.0",
+								"auth",
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Login first tester",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Response contains tokens\", function () {",
+									"    var jsonData = pm.response.json();",
+									"",
+									"    const tokens = jsonData[\"tokens\"];",
+									"    const accessToken = tokens[\"access_token\"];",
+									"    const refreshToken = tokens[\"refresh_token\"];",
+									"",
+									"    pm.collectionVariables.set(\"first_tester_access_token\", accessToken);",
+									"",
+									"    pm.expect(accessToken).to.not.undefined;",
+									"    pm.expect(refreshToken).to.not.undefined;",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\": \"{{first_tester_username}}\",\n    \"password\": \"test_password\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/bff/api/1.0/auth/login",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"bff",
+								"api",
+								"1.0",
+								"auth",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update profile of first tester by first tester",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Response contains updated first name and last name\", function () {",
+									"    var jsonData = pm.response.json();",
+									"",
+									"    const firstName = jsonData[\"first_name\"];",
+									"    const lastName = jsonData[\"last_name\"];",
+									"",
+									"    pm.expect(firstName).to.eq(\"updated first_name\");",
+									"    pm.expect(lastName).to.eq(\"updated last_name\");",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{first_tester_access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"first_name\": \"updated first_name\",\n    \"last_name\": \"updated last_name\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/bff/api/1.0/profiles/{{first_tester_id}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"bff",
+								"api",
+								"1.0",
+								"profiles",
+								"{{first_tester_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get profile of first tester by first tester",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Response contains updated first name and last name\", function () {",
+									"    var jsonData = pm.response.json();",
+									"",
+									"    const firstName = jsonData[\"first_name\"];",
+									"    const lastName = jsonData[\"last_name\"];",
+									"",
+									"    pm.expect(firstName).to.eq(\"updated first_name\");",
+									"    pm.expect(lastName).to.eq(\"updated last_name\");",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{first_tester_access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/bff/api/1.0/profiles/{{first_tester_id}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"bff",
+								"api",
+								"1.0",
+								"profiles",
+								"{{first_tester_id}}"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"description": "1. Register a new user (user1).\n2. Login (user1).\n3. Update profile for user1 (user1).\n4. Get profile by id for user1 (user1).",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "Scenario 2",
+			"item": [
+				{
+					"name": "Register second tester",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 201\", function () {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"",
+									"pm.test(\"Response contains tokens\", function () {",
+									"    var jsonData = pm.response.json();",
+									"",
+									"    const secondTesterId = jsonData[\"id\"];",
+									"    const secondTesterUsername = jsonData[\"username\"];",
+									"",
+									"    const tokens = jsonData[\"tokens\"];",
+									"    const accessToken = tokens[\"access_token\"];",
+									"    const refreshToken = tokens[\"refresh_token\"];",
+									"",
+									"    pm.collectionVariables.set(\"second_tester_id\", secondTesterId);",
+									"    pm.collectionVariables.set(\"second_tester_username\", secondTesterUsername);",
+									"",
+									"    pm.expect(secondTesterId).to.not.undefined;",
+									"    pm.expect(secondTesterUsername).to.not.undefined;",
+									"    pm.expect(accessToken).to.not.undefined;",
+									"    pm.expect(refreshToken).to.not.undefined;",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\": \"{{$randomUserName}}\",\n    \"password\": \"test_password\",\n    \"first_name\": \"test_first_name\",\n    \"last_name\": \"test_last_name\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/bff/api/1.0/auth/register",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"bff",
+								"api",
+								"1.0",
+								"auth",
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Login second tester",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Response contains tokens\", function () {",
+									"    var jsonData = pm.response.json();",
+									"",
+									"    const tokens = jsonData[\"tokens\"];",
+									"    const accessToken = tokens[\"access_token\"];",
+									"    const refreshToken = tokens[\"refresh_token\"];",
+									"",
+									"    pm.collectionVariables.set(\"second_tester_access_token\", accessToken);",
+									"",
+									"    pm.expect(accessToken).to.not.undefined;",
+									"    pm.expect(refreshToken).to.not.undefined;",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\": \"{{second_tester_username}}\",\n    \"password\": \"test_password\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/bff/api/1.0/auth/login",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"bff",
+								"api",
+								"1.0",
+								"auth",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update profile of first tester by second tester",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 403\", function () {",
+									"    pm.response.to.have.status(403);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{second_tester_access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"first_name\": \"updated first_name\",\n    \"last_name\": \"updated last_name\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/bff/api/1.0/profiles/{{first_tester_id}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"bff",
+								"api",
+								"1.0",
+								"profiles",
+								"{{first_tester_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get profile of first tester by second tester",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 403\", function () {",
+									"    pm.response.to.have.status(403);",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{second_tester_access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/bff/api/1.0/profiles/{{first_tester_id}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"bff",
+								"api",
+								"1.0",
+								"profiles",
+								"{{first_tester_id}}"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"description": "1. Register a new user (user2).\n2. Login (user2).\n3. Update profile for user1 (user2).\n4. Get profile by id for user1 (user2).",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "arch.homework"
+		},
+		{
+			"key": "first_tester_id",
+			"value": ""
+		},
+		{
+			"key": "second_tester_id",
+			"value": ""
+		},
+		{
+			"key": "first_tester_username",
+			"value": ""
+		},
+		{
+			"key": "second_tester_username",
+			"value": ""
+		},
+		{
+			"key": "first_tester_access_token",
+			"value": ""
+		},
+		{
+			"key": "second_tester_access_token",
+			"value": ""
+		}
+	]
+}

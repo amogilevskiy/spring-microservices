@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gateway-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: gateway-service
+  template:
+    metadata:
+      labels:
+        app: gateway-service
+    spec:
+      containers:
+        - name: gateway-service
+          image: amogilevskiy/ms-bff-gateway-service:1.0
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8902
+          readinessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8900
+            initialDelaySeconds: 20
+            timeoutSeconds: 10
+            periodSeconds: 3
+            failureThreshold: 2
+          livenessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8900
+            initialDelaySeconds: 30
+            timeoutSeconds: 2
+            periodSeconds: 8
+            failureThreshold: 1
